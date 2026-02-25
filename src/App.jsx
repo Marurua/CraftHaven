@@ -249,8 +249,20 @@ function AppProvider({ children }) {
   };
 
   // ── Admin: products ──
-  const saveProduct = async (form, editId) => {
-    const payload = { name: form.name, description: form.description, price: parseFloat(form.price), stock: parseInt(form.stock), emoji: form.emoji, category_id: parseInt(form.category_id) };
+  const saveProduct = async (form, editId, imageFile) => {
+    let image_url = form.image_url || null;
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("product-images").upload(fileName, imageFile, { upsert: true });
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage
+          .from("product-images").getPublicUrl(fileName);
+        image_url = publicUrl;
+      }
+    }
+    const payload = { name: form.name, description: form.description, price: parseFloat(form.price), stock: parseInt(form.stock), emoji: form.emoji, category_id: parseInt(form.category_id), image_url };
     if (editId) await supabase.from("products").update(payload).eq("id", editId);
     else await supabase.from("products").insert(payload);
     await fetchProducts();
@@ -516,7 +528,12 @@ function HomePage() {
       <div className="grid-products">
         {filtered.map(product => (
           <div key={product.id} className="product-card">
-            <div className="product-img" style={{ background: "var(--warm-light)" }}>{product.emoji}</div>
+            <div className="product-img" style={{ background: "var(--warm-light)", overflow: "hidden" }}>
+              {product.image_url
+                ? <img src={product.image_url} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                : <span style={{ fontSize: 56 }}>{product.emoji}</span>
+              }
+            </div>
             <div style={{ padding: "16px 20px 20px" }}>
               <p style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>{product.categories?.name}</p>
               <h3 style={{ fontSize: 17, marginBottom: 6 }}>{product.name}</h3>
@@ -653,20 +670,28 @@ function CatalogPage() {
   const [prodModal, setProdModal] = useState(false);
   const [catModal, setCatModal] = useState(false);
   const [editProd, setEditProd] = useState(null);
-  const [form, setForm] = useState({ name: "", price: "", category_id: "", stock: "", emoji: "📦", description: "" });
+  const [form, setForm] = useState({ name: "", price: "", category_id: "", stock: "", emoji: "📦", description: "", image_url: "" });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [catForm, setCatForm] = useState({ name: "", icon: "📦" });
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
   const EMOJIS = ["📦","👗","👕","👜","🧶","🎨","🕯️","🏺","🛍️","🧢","💍","🎀","🌸","🍃","✨","🎁"];
   if (!currentUser) return <div className="page"><div className="alert alert-error">Please log in to manage the catalog.</div></div>;
-  const openAddProd = () => { setEditProd(null); setForm({ name: "", price: "", category_id: categories[0]?.id || "", stock: "", emoji: "📦", description: "" }); setFormError(""); setProdModal(true); };
-  const openEditProd = (p) => { setEditProd(p); setForm({ name: p.name, price: p.price, category_id: p.category_id, stock: p.stock, emoji: p.emoji, description: p.description }); setFormError(""); setProdModal(true); };
+  const openAddProd = () => { setEditProd(null); setForm({ name: "", price: "", category_id: categories[0]?.id || "", stock: "", emoji: "📦", description: "", image_url: "" }); setImageFile(null); setImagePreview(null); setFormError(""); setProdModal(true); };
+  const openEditProd = (p) => { setEditProd(p); setForm({ name: p.name, price: p.price, category_id: p.category_id, stock: p.stock, emoji: p.emoji, description: p.description, image_url: p.image_url || "" }); setImageFile(null); setImagePreview(p.image_url || null); setFormError(""); setProdModal(true); };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
   const handleSaveProd = async () => {
     setFormError("");
     if (!form.name || !form.price || !form.category_id || !form.stock) return setFormError("All fields required.");
     if (isNaN(parseFloat(form.price)) || parseFloat(form.price) <= 0) return setFormError("Enter a valid price.");
     setBusy(true);
-    await saveProduct(form, editProd?.id);
+    await saveProduct(form, editProd?.id, imageFile);
     setBusy(false); setProdModal(false);
     showToast(editProd ? "Product updated." : "Product added.");
   };
@@ -688,7 +713,12 @@ function CatalogPage() {
             <tbody>
               {products.map(p => (
                 <tr key={p.id}>
-                  <td><div style={{ display: "flex", alignItems: "center", gap: 12 }}><span style={{ fontSize: 24, width: 40, height: 40, background: "var(--warm-light)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>{p.emoji}</span><div><p style={{ fontWeight: 600 }}>{p.name}</p><p style={{ fontSize: 12, color: "var(--muted)" }}>{p.description?.slice(0, 40)}...</p></div></div></td>
+                  <td><div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 44, height: 44, background: "var(--warm-light)", borderRadius: 8, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      {p.image_url ? <img src={p.image_url} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: 22 }}>{p.emoji}</span>}
+                    </div>
+                    <div><p style={{ fontWeight: 600 }}>{p.name}</p><p style={{ fontSize: 12, color: "var(--muted)" }}>{p.description?.slice(0, 40)}...</p></div>
+                  </div></td>
                   <td><span className="badge badge-user">{p.categories?.name || "—"}</span></td>
                   <td style={{ fontWeight: 700, color: "var(--warm)", fontSize: 16 }}>FJ${p.price}</td>
                   <td><span style={{ background: p.stock < 5 ? "#fde0e0" : "var(--warm-light)", color: p.stock < 5 ? "var(--red)" : "var(--warm)", padding: "3px 10px", borderRadius: 20, fontSize: 12, fontWeight: 600 }}>{p.stock} units</span></td>
@@ -713,6 +743,29 @@ function CatalogPage() {
           <div className="modal" style={{ maxWidth: 500 }} onClick={e => e.stopPropagation()}>
             <h2 style={{ fontSize: 22, marginBottom: 20 }}>{editProd ? "Edit Product" : "Add Product"}</h2>
             {formError && <div className="alert alert-error">{formError}</div>}
+
+            {/* Image Upload */}
+            <div className="form-group">
+              <label className="form-label">Product Image</label>
+              <div
+                onClick={() => document.getElementById("img-upload").click()}
+                style={{ border: "2px dashed var(--border)", borderRadius: 12, padding: 16, cursor: "pointer", textAlign: "center", background: "var(--cream)", transition: "border-color 0.2s", position: "relative", overflow: "hidden", minHeight: 120 }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "var(--warm)"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+              >
+                {imagePreview
+                  ? <img src={imagePreview} alt="preview" style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: 8 }} />
+                  : <div style={{ color: "var(--muted)", fontSize: 14 }}>
+                      <div style={{ fontSize: 32, marginBottom: 8 }}>📷</div>
+                      <p style={{ fontWeight: 600 }}>Click to upload image</p>
+                      <p style={{ fontSize: 12, marginTop: 4 }}>JPG, PNG or WEBP — max 5MB</p>
+                    </div>
+                }
+                {imagePreview && <div style={{ position: "absolute", top: 8, right: 8, background: "var(--warm)", color: "white", borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 600 }}>Change</div>}
+              </div>
+              <input id="img-upload" type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageChange} />
+            </div>
+
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div className="form-group" style={{ gridColumn: "1 / -1" }}><label className="form-label">Product Name</label><input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
               <div className="form-group"><label className="form-label">Price (FJD)</label><input type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></div>
