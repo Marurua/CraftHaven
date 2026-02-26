@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0e7c7b"/>
+      <stop offset="100%" style="stop-color:#8e44ad"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="38" fill="url(#bg)"/>
+  <g transform="translate(96,90)">
+    <ellipse cx="0" cy="-36" rx="14" ry="34" fill="#9b59b6" transform="rotate(0)"/>
+    <ellipse cx="0" cy="-36" rx="14" ry="34" fill="#f0c040" transform="rotate(72)"/>
+    <ellipse cx="0" cy="-36" rx="14" ry="34" fill="#9b59b6" transform="rotate(144)"/>
+    <ellipse cx="0" cy="-36" rx="14" ry="34" fill="#f0c040" transform="rotate(216)"/>
+    <ellipse cx="0" cy="-36" rx="14" ry="34" fill="#9b59b6" transform="rotate(288)"/>
+    <circle cx="0" cy="0" r="16" fill="#f9e44a"/>
+    <circle cx="0" cy="0" r="8" fill="#f4c430"/>
+  </g>
+  <text x="96" y="164" font-family="Georgia,serif" font-size="28" font-weight="bold" fill="rgba(255,255,255,0.92)" text-anchor="middle">CH</text>
+</svg>
