@@ -1,31 +1,96 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
+// ─── Frangipani SVG decoration ────────────────────────────────────────────────
+const FrangipaniCorner = () => (
+  <svg viewBox="0 0 260 260" style={{ position: "fixed", top: 0, left: 0, width: 260, height: 260, zIndex: 0, pointerEvents: "none", opacity: 0.92 }} xmlns="http://www.w3.org/2000/svg">
+    {/* Leaves */}
+    <ellipse cx="30" cy="80" rx="18" ry="52" fill="#2d7a3a" opacity="0.85" transform="rotate(-30 30 80)" />
+    <ellipse cx="70" cy="40" rx="14" ry="44" fill="#3a9e4a" opacity="0.75" transform="rotate(15 70 40)" />
+    <ellipse cx="10" cy="140" rx="13" ry="40" fill="#256b30" opacity="0.7" transform="rotate(-50 10 140)" />
+    <ellipse cx="100" cy="20" rx="12" ry="36" fill="#2d8c3e" opacity="0.65" transform="rotate(40 100 20)" />
+    {/* Flower 1 - purple frangipani (top left) */}
+    <g transform="translate(52, 72)">
+      <ellipse cx="0" cy="-22" rx="9" ry="20" fill="#9b59b6" opacity="0.95" transform="rotate(0)" />
+      <ellipse cx="0" cy="-22" rx="9" ry="20" fill="#8e44ad" opacity="0.95" transform="rotate(72)" />
+      <ellipse cx="0" cy="-22" rx="9" ry="20" fill="#a569bd" opacity="0.95" transform="rotate(144)" />
+      <ellipse cx="0" cy="-22" rx="9" ry="20" fill="#9b59b6" opacity="0.95" transform="rotate(216)" />
+      <ellipse cx="0" cy="-22" rx="9" ry="20" fill="#8e44ad" opacity="0.95" transform="rotate(288)" />
+      <circle cx="0" cy="0" r="8" fill="#f9e44a" />
+      <circle cx="0" cy="0" r="4" fill="#f4c430" />
+    </g>
+    {/* Flower 2 - yellow frangipani */}
+    <g transform="translate(105, 38)">
+      <ellipse cx="0" cy="-18" rx="7" ry="16" fill="#f0c040" opacity="0.95" transform="rotate(0)" />
+      <ellipse cx="0" cy="-18" rx="7" ry="16" fill="#e8b030" opacity="0.95" transform="rotate(72)" />
+      <ellipse cx="0" cy="-18" rx="7" ry="16" fill="#f5cd50" opacity="0.95" transform="rotate(144)" />
+      <ellipse cx="0" cy="-18" rx="7" ry="16" fill="#f0c040" opacity="0.95" transform="rotate(216)" />
+      <ellipse cx="0" cy="-18" rx="7" ry="16" fill="#e8b030" opacity="0.95" transform="rotate(288)" />
+      <circle cx="0" cy="0" r="6" fill="#fff9c4" />
+      <circle cx="0" cy="0" r="3" fill="#f9e44a" />
+    </g>
+    {/* Flower 3 - small purple */}
+    <g transform="translate(22, 130)">
+      <ellipse cx="0" cy="-14" rx="6" ry="13" fill="#b07fd4" opacity="0.9" transform="rotate(0)" />
+      <ellipse cx="0" cy="-14" rx="6" ry="13" fill="#9b59b6" opacity="0.9" transform="rotate(72)" />
+      <ellipse cx="0" cy="-14" rx="6" ry="13" fill="#c39bd3" opacity="0.9" transform="rotate(144)" />
+      <ellipse cx="0" cy="-14" rx="6" ry="13" fill="#b07fd4" opacity="0.9" transform="rotate(216)" />
+      <ellipse cx="0" cy="-14" rx="6" ry="13" fill="#9b59b6" opacity="0.9" transform="rotate(288)" />
+      <circle cx="0" cy="0" r="5" fill="#f9e44a" />
+      <circle cx="0" cy="0" r="2.5" fill="#f4c430" />
+    </g>
+    {/* Flower 4 - tiny yellow */}
+    <g transform="translate(148, 18)">
+      <ellipse cx="0" cy="-12" rx="5" ry="11" fill="#f5cd50" opacity="0.85" transform="rotate(36)" />
+      <ellipse cx="0" cy="-12" rx="5" ry="11" fill="#f0c040" opacity="0.85" transform="rotate(108)" />
+      <ellipse cx="0" cy="-12" rx="5" ry="11" fill="#e8b030" opacity="0.85" transform="rotate(180)" />
+      <ellipse cx="0" cy="-12" rx="5" ry="11" fill="#f5cd50" opacity="0.85" transform="rotate(252)" />
+      <ellipse cx="0" cy="-12" rx="5" ry="11" fill="#f0c040" opacity="0.85" transform="rotate(324)" />
+      <circle cx="0" cy="0" r="4.5" fill="#fffde7" />
+      <circle cx="0" cy="0" r="2" fill="#f9e44a" />
+    </g>
+    {/* Buds */}
+    <ellipse cx="80" cy="90" rx="5" ry="9" fill="#c39bd3" opacity="0.7" transform="rotate(-20 80 90)" />
+    <ellipse cx="130" cy="55" rx="4" ry="7" fill="#f5cd50" opacity="0.6" transform="rotate(15 130 55)" />
+  </svg>
+);
+
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const FontStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --cream: #faf6f1; --ink: #1a1208; --warm: #c8693a; --warm-light: #f0ddd0;
+      --cream: #f5f0e8; --ink: #1a1208; --warm: #c8693a; --warm-light: #f0ddd0;
       --warm-mid: #e8a882; --muted: #8a7968; --border: #e4dbd0; --white: #ffffff;
-      --green: #3a7c5c; --red: #b94040; --blue: #2a5fa8; --purple: #6b3fa0;
+      --green: #2d7a3a; --red: #b94040; --blue: #2a5fa8; --purple: #8e44ad;
+      --teal: #0e7c7b; --ocean: #1a6fa8; --sand: #e8d5a3;
       --shadow: 0 2px 16px rgba(26,18,8,0.08); --shadow-lg: 0 8px 40px rgba(26,18,8,0.14);
     }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(142,68,173,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 100%, rgba(14,124,123,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(26,111,168,0.05) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
     h1,h2,h3,h4 { font-family: 'Playfair Display', serif; }
     button { cursor: pointer; font-family: 'DM Sans', sans-serif; border: none; outline: none; }
     input, select, textarea { font-family: 'DM Sans', sans-serif; outline: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; background: var(--white); color: var(--ink); width: 100%; transition: border-color 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: var(--warm); }
-    .btn-primary { background: var(--warm); color: white; padding: 11px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: background 0.2s, transform 0.1s; }
-    .btn-primary:hover { background: #b55a2e; } .btn-primary:active { transform: scale(0.98); }
+    .btn-primary { background: linear-gradient(135deg, #c8693a, #a8522a); color: white; padding: 11px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all 0.2s; box-shadow: 0 2px 8px rgba(200,105,58,0.3); }
+    .btn-primary:hover { background: linear-gradient(135deg, #b55a2e, #954820); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(200,105,58,0.4); }
+    .btn-primary:active { transform: scale(0.98); }
     .btn-outline { background: transparent; color: var(--warm); border: 1.5px solid var(--warm); padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all 0.2s; }
     .btn-outline:hover { background: var(--warm-light); }
     .btn-ghost { background: transparent; color: var(--muted); padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: background 0.2s, color 0.2s; }
     .btn-ghost:hover { background: var(--warm-light); color: var(--warm); }
     .btn-danger { background: var(--red); color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; }
     .btn-danger:hover { opacity: 0.85; }
-    .card { background: var(--white); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+    .card { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; border: 1px solid rgba(255,255,255,0.6); }
     .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
     .badge-admin { background: #fde8d0; color: var(--warm); }
     .badge-user { background: #dceee6; color: var(--green); }
@@ -35,17 +100,25 @@ const FontStyle = () => (
     .badge-rejected { background: #fde0e0; color: var(--red); }
     .badge-shipped { background: #d0e8f5; color: var(--blue); }
     .badge-delivered { background: #e8d0f5; color: var(--purple); }
-    .nav { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 64px; box-shadow: 0 1px 8px rgba(26,18,8,0.05); }
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid rgba(228,219,208,0.6);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      box-shadow: 0 1px 20px rgba(142,68,173,0.08);
+    }
     .nav-logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.5px; cursor: pointer; }
     .nav-logo span { color: var(--warm); }
     .nav-links { display: flex; align-items: center; gap: 8px; }
-    .page { min-height: calc(100vh - 64px); padding: 40px; max-width: 1200px; margin: 0 auto; }
+    .page { min-height: calc(100vh - 64px); padding: 40px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
     .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
-    .product-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; }
-    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .product-card { background: rgba(255,255,255,0.93); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid rgba(255,255,255,0.7); }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(142,68,173,0.15); }
     .product-img { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 56px; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
-    .modal { background: var(--white); border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); animation: popIn 0.2s ease; max-height: 90vh; overflow-y: auto; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(26,18,8,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+    .modal { background: rgba(255,255,255,0.97); border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); animation: popIn 0.2s ease; max-height: 90vh; overflow-y: auto; }
     @keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .form-label { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -53,15 +126,15 @@ const FontStyle = () => (
     .table th { text-align: left; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); padding: 12px 16px; border-bottom: 1.5px solid var(--border); }
     .table td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
     .table tr:last-child td { border-bottom: none; }
-    .table tr:hover td { background: var(--cream); }
+    .table tr:hover td { background: rgba(245,240,232,0.6); }
     .tabs { display: flex; gap: 4px; background: var(--warm-light); padding: 4px; border-radius: 10px; margin-bottom: 28px; width: fit-content; flex-wrap: wrap; }
     .tab { padding: 8px 20px; border-radius: 7px; font-size: 14px; font-weight: 500; background: transparent; color: var(--muted); transition: all 0.2s; }
     .tab.active { background: var(--white); color: var(--ink); font-weight: 600; box-shadow: 0 1px 6px rgba(26,18,8,0.1); }
     .alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
     .alert-error { background: #fde0e0; color: var(--red); }
     .alert-success { background: #dceee6; color: var(--green); }
-    .stat-card { background: var(--white); border-radius: 14px; padding: 24px; box-shadow: var(--shadow); }
-    .cart-sidebar { position: fixed; right: 0; top: 64px; bottom: 0; width: 380px; background: var(--white); box-shadow: -4px 0 24px rgba(26,18,8,0.1); z-index: 90; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s ease; }
+    .stat-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-radius: 14px; padding: 24px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.7); }
+    .cart-sidebar { position: fixed; right: 0; top: 64px; bottom: 0; width: 380px; background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); box-shadow: -4px 0 24px rgba(142,68,173,0.12); z-index: 90; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s ease; }
     .cart-sidebar.open { transform: translateX(0); }
     .payment-method-card { border: 2px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
     .payment-method-card:hover { border-color: var(--warm); background: var(--warm-light); }
@@ -81,6 +154,7 @@ const FontStyle = () => (
     .step.done::after { background: var(--green); }
     .spinner { width: 36px; height: 36px; border: 3px solid var(--warm-light); border-top-color: var(--warm); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .fiji-wave { position: fixed; bottom: 0; left: 0; right: 0; height: 120px; z-index: 0; pointer-events: none; opacity: 0.18; }
     @media (max-width: 768px) { .nav { padding: 0 16px; } .page { padding: 20px 16px; } .cart-sidebar { width: 100%; } }
   `}</style>
 );
@@ -506,17 +580,35 @@ function HomePage() {
   const filtered = products.filter(p => (selectedCat === 0 || p.category_id === selectedCat) && p.name.toLowerCase().includes(search.toLowerCase()));
   return (
     <div className="page">
-      <div style={{ background: "linear-gradient(135deg, var(--warm-light) 0%, #fde8d4 100%)", borderRadius: 24, padding: "52px 48px", marginBottom: 48, position: "relative", overflow: "hidden" }}>
-        <div style={{ maxWidth: 520 }}>
-          <p style={{ color: "var(--warm)", fontWeight: 600, letterSpacing: 1, fontSize: 13, textTransform: "uppercase", marginBottom: 12 }}>Handmade in Fiji 🇫🇯</p>
-          <h1 style={{ fontSize: 46, lineHeight: 1.15, marginBottom: 16 }}>Unique goods,<br /><span style={{ color: "var(--warm)" }}>crafted for you</span></h1>
-          <p style={{ color: "var(--muted)", fontSize: 15, lineHeight: 1.6, marginBottom: 16 }}>Discover one-of-a-kind clothing, crafts & accessories. Pay your way.</p>
+      <div style={{
+        background: "linear-gradient(135deg, rgba(14,124,123,0.85) 0%, rgba(26,111,168,0.75) 40%, rgba(142,68,173,0.6) 100%)",
+        backgroundImage: `url('https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?w=1400&q=80')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center 60%",
+        backgroundBlendMode: "overlay",
+        borderRadius: 24,
+        padding: "64px 48px",
+        marginBottom: 48,
+        position: "relative",
+        overflow: "hidden",
+        minHeight: 320,
+        boxShadow: "0 8px 40px rgba(14,124,123,0.25)"
+      }}>
+        {/* Overlay for readability */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(14,124,123,0.55) 0%, rgba(26,111,168,0.4) 50%, rgba(0,0,0,0.2) 100%)", borderRadius: 24 }} />
+        <div style={{ maxWidth: 560, position: "relative", zIndex: 2 }}>
+          <p style={{ color: "rgba(255,255,255,0.9)", fontWeight: 700, letterSpacing: 2, fontSize: 12, textTransform: "uppercase", marginBottom: 14, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>🌺 Handmade in Fiji 🇫🇯</p>
+          <h1 style={{ fontSize: 48, lineHeight: 1.1, marginBottom: 16, color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}>Unique goods,<br /><span style={{ color: "#f9e44a" }}>crafted for you</span></h1>
+          <p style={{ color: "rgba(255,255,255,0.88)", fontSize: 16, lineHeight: 1.6, marginBottom: 20, textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>Discover one-of-a-kind clothing, crafts & accessories. Pay your way — island style.</p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-            {["🏦 BSP · ANZ · Westpac", "📱 MPaisa", "💳 MyCash", "💵 Cash on Delivery"].map(p => (<span key={p} style={{ background: "white", color: "var(--warm)", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>{p}</span>))}
+            {["🏦 BSP · ANZ · Westpac", "📱 MPaisa", "💳 MyCash", "💵 Cash on Delivery"].map(p => (<span key={p} style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)", color: "white", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(255,255,255,0.35)" }}>{p}</span>))}
           </div>
-          <button className="btn-primary" style={{ fontSize: 16, padding: "13px 32px" }} onClick={() => !currentUser && setAuthModal("signup")}>{currentUser ? "Browse Collection ↓" : "Shop Now →"}</button>
+          <button className="btn-primary" style={{ fontSize: 16, padding: "14px 36px", background: "linear-gradient(135deg, #f9e44a, #f4c430)", color: "#1a1208", boxShadow: "0 4px 16px rgba(249,228,74,0.4)" }} onClick={() => !currentUser && setAuthModal("signup")}>{currentUser ? "Browse Collection ↓" : "Shop Now →"}</button>
         </div>
-        <div style={{ fontSize: 110, opacity: 0.15, position: "absolute", right: 48, top: "50%", transform: "translateY(-50%)" }}>🛍️</div>
+        {/* Decorative island elements */}
+        <div style={{ position: "absolute", right: 40, bottom: 24, fontSize: 72, opacity: 0.25, filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))" }}>🌴</div>
+        <div style={{ position: "absolute", right: 140, top: 30, fontSize: 40, opacity: 0.2 }}>🌺</div>
+        <div style={{ position: "absolute", right: 80, top: 20, fontSize: 28, opacity: 0.18 }}>🌸</div>
       </div>
       <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap", alignItems: "center" }}>
         <input style={{ maxWidth: 260 }} placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} />
@@ -816,6 +908,12 @@ export default function App() {
   return (
     <AppProvider>
       <FontStyle />
+      <FrangipaniCorner />
+      {/* Ocean wave at bottom */}
+      <svg className="fiji-wave" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z" fill="#0e7c7b" />
+        <path d="M0,80 C360,20 720,100 1080,40 C1260,10 1380,70 1440,80 L1440,120 L0,120 Z" fill="#1a6fa8" opacity="0.6" />
+      </svg>
       <Navbar />
       <PageRouter />
       <CartSidebar />
