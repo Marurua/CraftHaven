@@ -155,7 +155,23 @@ const FontStyle = () => (
     .spinner { width: 36px; height: 36px; border: 3px solid var(--warm-light); border-top-color: var(--warm); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .fiji-wave { position: fixed; bottom: 0; left: 0; right: 0; height: 120px; z-index: 0; pointer-events: none; opacity: 0.18; }
-    @media (max-width: 768px) { .nav { padding: 0 16px; } .page { padding: 20px 16px; } .cart-sidebar { width: 100%; } }
+    /* ── Mobile fixes ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 16px; }
+      .nav-logo { font-size: 18px; }
+      .page { padding: 16px; }
+      .cart-sidebar { width: 100%; }
+      .grid-products { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .product-img { height: 140px; font-size: 40px; }
+      .tabs { gap: 4px; }
+      .tab { padding: 6px 12px; font-size: 13px; }
+    }
+    @media (max-width: 480px) {
+      .grid-products { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .nav-links { gap: 4px; }
+      .btn-ghost { padding: 6px 8px; font-size: 13px; }
+      .btn-primary { padding: 9px 16px; font-size: 13px; }
+    }
   `}</style>
 );
 
@@ -586,29 +602,25 @@ function HomePage() {
         backgroundSize: "cover",
         backgroundPosition: "center 60%",
         backgroundBlendMode: "overlay",
-        borderRadius: 24,
-        padding: "64px 48px",
-        marginBottom: 48,
+        borderRadius: 20,
+        padding: "clamp(28px, 5vw, 64px) clamp(20px, 4vw, 48px)",
+        marginBottom: 32,
         position: "relative",
         overflow: "hidden",
-        minHeight: 320,
+        minHeight: "clamp(260px, 45vw, 340px)",
         boxShadow: "0 8px 40px rgba(14,124,123,0.25)"
       }}>
-        {/* Overlay for readability */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(14,124,123,0.55) 0%, rgba(26,111,168,0.4) 50%, rgba(0,0,0,0.2) 100%)", borderRadius: 24 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(14,124,123,0.6) 0%, rgba(26,111,168,0.45) 50%, rgba(0,0,0,0.25) 100%)", borderRadius: 20 }} />
         <div style={{ maxWidth: 560, position: "relative", zIndex: 2 }}>
-          <p style={{ color: "rgba(255,255,255,0.9)", fontWeight: 700, letterSpacing: 2, fontSize: 12, textTransform: "uppercase", marginBottom: 14, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>🌺 Handmade in Fiji 🇫🇯</p>
-          <h1 style={{ fontSize: 48, lineHeight: 1.1, marginBottom: 16, color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}>Unique goods,<br /><span style={{ color: "#f9e44a" }}>crafted for you</span></h1>
-          <p style={{ color: "rgba(255,255,255,0.88)", fontSize: 16, lineHeight: 1.6, marginBottom: 20, textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>Discover one-of-a-kind clothing, crafts & accessories. Pay your way — island style.</p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 28 }}>
-            {["🏦 BSP · ANZ · Westpac", "📱 MPaisa", "💳 MyCash", "💵 Cash on Delivery"].map(p => (<span key={p} style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)", color: "white", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(255,255,255,0.35)" }}>{p}</span>))}
+          <p style={{ color: "rgba(255,255,255,0.9)", fontWeight: 700, letterSpacing: 2, fontSize: "clamp(10px, 2vw, 12px)", textTransform: "uppercase", marginBottom: 10, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>🌺 Handmade in Fiji 🇫🇯</p>
+          <h1 style={{ fontSize: "clamp(28px, 6vw, 48px)", lineHeight: 1.15, marginBottom: 12, color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}>Unique goods,<br /><span style={{ color: "#f9e44a" }}>crafted for you</span></h1>
+          <p style={{ color: "rgba(255,255,255,0.88)", fontSize: "clamp(13px, 2.5vw, 16px)", lineHeight: 1.6, marginBottom: 16, textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>One-of-a-kind clothing, crafts & accessories. Pay your way.</p>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+            {["🏦 BSP·ANZ·Westpac", "📱 MPaisa", "💳 MyCash", "💵 COD"].map(p => (<span key={p} style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)", color: "white", fontSize: "clamp(10px, 2vw, 12px)", fontWeight: 600, padding: "4px 10px", borderRadius: 20, border: "1px solid rgba(255,255,255,0.35)", whiteSpace: "nowrap" }}>{p}</span>))}
           </div>
-          <button className="btn-primary" style={{ fontSize: 16, padding: "14px 36px", background: "linear-gradient(135deg, #f9e44a, #f4c430)", color: "#1a1208", boxShadow: "0 4px 16px rgba(249,228,74,0.4)" }} onClick={() => !currentUser && setAuthModal("signup")}>{currentUser ? "Browse Collection ↓" : "Shop Now →"}</button>
+          <button className="btn-primary" style={{ fontSize: "clamp(13px, 2.5vw, 16px)", padding: "12px 28px", background: "linear-gradient(135deg, #f9e44a, #f4c430)", color: "#1a1208", boxShadow: "0 4px 16px rgba(249,228,74,0.4)", fontWeight: 700 }} onClick={() => !currentUser && setAuthModal("signup")}>{currentUser ? "Browse Collection ↓" : "Shop Now →"}</button>
         </div>
-        {/* Decorative island elements */}
-        <div style={{ position: "absolute", right: 40, bottom: 24, fontSize: 72, opacity: 0.25, filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))" }}>🌴</div>
-        <div style={{ position: "absolute", right: 140, top: 30, fontSize: 40, opacity: 0.2 }}>🌺</div>
-        <div style={{ position: "absolute", right: 80, top: 20, fontSize: 28, opacity: 0.18 }}>🌸</div>
+        <div style={{ position: "absolute", right: "5%", bottom: 16, fontSize: "clamp(40px, 8vw, 72px)", opacity: 0.22, filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))", pointerEvents: "none" }}>🌴</div>
       </div>
       <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap", alignItems: "center" }}>
         <input style={{ maxWidth: 260 }} placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} />
@@ -884,7 +896,26 @@ function CatalogPage() {
   );
 }
 
-// ─── Loading Screen ───────────────────────────────────────────────────────────
+// ─── PWA Install Banner ───────────────────────────────────────────────────────
+function PWAInstallBanner() {
+  const [prompt, setPrompt] = useState(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setPrompt(e); setShow(true); };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+  if (!show) return null;
+  const install = async () => { if (!prompt) return; prompt.prompt(); const { outcome } = await prompt.userChoice; if (outcome === 'accepted') setShow(false); };
+  return (
+    <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg, #0e7c7b, #8e44ad)", color: "white", borderRadius: 16, padding: "14px 20px", display: "flex", alignItems: "center", gap: 14, zIndex: 999, boxShadow: "0 8px 32px rgba(0,0,0,0.25)", maxWidth: "90vw", animation: "popIn 0.3s ease" }}>
+      <span style={{ fontSize: 28 }}>🌺</span>
+      <div><p style={{ fontWeight: 700, fontSize: 14 }}>Install CraftHaven App</p><p style={{ fontSize: 12, opacity: 0.85 }}>Add to your home screen for quick access</p></div>
+      <button onClick={install} style={{ background: "#f9e44a", color: "#1a1208", border: "none", borderRadius: 10, padding: "8px 16px", fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}>Install ↓</button>
+      <button onClick={() => setShow(false)} style={{ background: "rgba(255,255,255,0.2)", color: "white", border: "none", borderRadius: 8, padding: "6px 10px", cursor: "pointer", fontSize: 14 }}>✕</button>
+    </div>
+  );
+}
 function LoadingScreen() {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: 16 }}>
@@ -919,6 +950,7 @@ export default function App() {
       <CartSidebar />
       <CheckoutModal />
       <AuthModal />
+      <PWAInstallBanner />
       <Toast />
     </AppProvider>
   );
